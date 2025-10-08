@@ -55,4 +55,15 @@ public class AccountService {
         return AccountResponseDtoMapper.accountsToAccountResponseDtos(accounts);
     }
 
+    public AccountResponseDto getAccount(Long userId, String accountNumber) {
+
+        Account account = this.accountRepository.findByAccountNumber(accountNumber).orElseThrow();
+
+        if (account.getUser().getId().equals(userId)) {
+            return AccountResponseDtoMapper.accountToAccountResponseDto(account);
+        }
+        throw new RuntimeException("Account access forbidden");
+
+    }
+
 }

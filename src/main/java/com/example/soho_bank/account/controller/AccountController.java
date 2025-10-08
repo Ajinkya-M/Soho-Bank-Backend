@@ -43,5 +43,11 @@ public class AccountController {
         return ResponseEntity.ok(this.accountService.getAccountsForUserId(userId));
     }
 
+    @GetMapping("/{accountNumber}")
+    public ResponseEntity<AccountResponseDto> getAccount(@PathVariable String accountNumber) {
+        var userId = AuthHelpers.getAuthenticatedUserId();
+        return ResponseEntity.ok(this.accountService.getAccount(userId, accountNumber));
+    }
+
 
 }
