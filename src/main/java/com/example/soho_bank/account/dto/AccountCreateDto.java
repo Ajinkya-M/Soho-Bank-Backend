@@ -14,9 +14,9 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 @Builder
 public class AccountCreateDto {
-    private String accountNumber;
 
-    private BigDecimal balance = new BigDecimal("0.00");
+    @Builder.Default
+    private BigDecimal balance = BigDecimal.ZERO;
 
     private AccountType accountType;
 

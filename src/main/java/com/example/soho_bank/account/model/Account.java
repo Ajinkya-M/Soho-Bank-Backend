@@ -13,6 +13,7 @@ import lombok.ToString;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDateTime;
 
 @Entity
@@ -28,13 +29,13 @@ public class Account {
     private Long id;
 
 
-    // generate a random numeric account number
+    // generate a account number from sequence defined in database called account_number_seq
     @Column(unique = true, nullable = false)
-    private String accountNumber;
+    private Long accountNumber;
 
-    @Column(nullable = false)
+    @Column(nullable = false, scale = 2)
     @Builder.Default
-    private BigDecimal balance = new BigDecimal("0.00");
+    private BigDecimal balance = BigDecimal.ZERO;
 
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -54,4 +55,13 @@ public class Account {
     @UpdateTimestamp
     private LocalDateTime updatedAt;
 
+
+    public void setBalance(BigDecimal balance) {
+        if (balance == null) {
+            this.balance = BigDecimal.ZERO;
+        }
+        else {
+            this.balance = balance.setScale(2, RoundingMode.HALF_UP);
+        }
+    }
 }

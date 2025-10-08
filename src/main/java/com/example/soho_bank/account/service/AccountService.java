@@ -12,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Service
@@ -26,8 +27,9 @@ public class AccountService {
     @Transactional
     public String createAccount(AccountCreateDto accountCreateDto, Long userId) {
         var user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("User not found"));
+        var generatedAccountNumber = this.accountRepository.getNextAccountNumber();
         var account = Account.builder()
-                .accountNumber(accountCreateDto.getAccountNumber())
+                .accountNumber(generatedAccountNumber)
                 .accountType(accountCreateDto.getAccountType())
                 .balance(accountCreateDto.getBalance())
                 .currency(accountCreateDto.getCurrency())
@@ -35,13 +37,11 @@ public class AccountService {
                 .build();
 
         log.info("Saving account for userId={}, accountNumber={}", userId, account.getAccountNumber());
-        accountRepository.save(account);
-
-        var savedAccount = accountRepository.findByAccountNumber(accountCreateDto.getAccountNumber()).orElseThrow(() -> new RuntimeException("Account not found"));
+        var savedAccount = accountRepository.save(account);
 
         user.getAccounts().add(account);
 
-        return savedAccount.getAccountNumber();
+        return savedAccount.getAccountNumber().toString();
     }
 
     public List<AccountResponseDto> getAccountsForUserId(Long userId) {
@@ -55,7 +55,7 @@ public class AccountService {
         return AccountResponseDtoMapper.accountsToAccountResponseDtos(accounts);
     }
 
-    public AccountResponseDto getAccount(Long userId, String accountNumber) {
+    public AccountResponseDto getAccount(Long userId, Long accountNumber) {
 
         Account account = this.accountRepository.findByAccountNumber(accountNumber).orElseThrow();
 
@@ -64,6 +64,21 @@ public class AccountService {
         }
         throw new RuntimeException("Account access forbidden");
 
+    }
+
+    @Transactional
+    public AccountResponseDto depositAmount(Long accountNumber, Long userId, BigDecimal amount) {
+        Account account = this.accountRepository.findByAccountNumber(accountNumber).orElseThrow();
+        if (!account.getUser().getId().equals(userId)) {
+            throw new RuntimeException("Account access forbidden");
+        }
+
+        account.setBalance(account.getBalance().add(amount));
+
+        accountRepository.save(account);
+
+        var savedAccount = this.accountRepository.findByAccountNumber(accountNumber).orElseThrow();
+        return AccountResponseDtoMapper.accountToAccountResponseDto(savedAccount);
     }
 
 }

@@ -2,6 +2,7 @@ package com.example.soho_bank.account.controller;
 
 import com.example.soho_bank.account.dto.AccountCreateDto;
 import com.example.soho_bank.account.dto.AccountResponseDto;
+import com.example.soho_bank.account.dto.TransactionRequestDto;
 import com.example.soho_bank.account.service.AccountService;
 import com.example.soho_bank.auth.common.AuthHelpers;
 import com.example.soho_bank.user.model.User;
@@ -44,9 +45,14 @@ public class AccountController {
     }
 
     @GetMapping("/{accountNumber}")
-    public ResponseEntity<AccountResponseDto> getAccount(@PathVariable String accountNumber) {
+    public ResponseEntity<AccountResponseDto> getAccount(@PathVariable Long accountNumber) {
         var userId = AuthHelpers.getAuthenticatedUserId();
         return ResponseEntity.ok(this.accountService.getAccount(userId, accountNumber));
+    }
+
+    @PostMapping("/{accountNumber}/transaction")
+    public ResponseEntity<?> transaction(@RequestBody TransactionRequestDto transactionRequestDto) {
+        return ResponseEntity.ok("Hi");
     }
 
 

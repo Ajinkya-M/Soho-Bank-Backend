@@ -15,7 +15,7 @@ import java.math.BigDecimal;
 @Builder
 public class AccountResponseDto {
     private Long id;
-    private String accountNumber;
+    private Long accountNumber;
     private BigDecimal balance;
     private AccountType accountType;
     private Currency currency;
