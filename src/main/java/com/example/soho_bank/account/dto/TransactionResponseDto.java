@@ -1,26 +1,30 @@
 package com.example.soho_bank.account.dto;
 
-
+import com.example.soho_bank.account.model.Account;
 import com.example.soho_bank.account.model.type.TransactionType;
-import jakarta.transaction.Transaction;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.util.UUID;
 
-@Data
 @Builder
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class TransactionRequestDto {
+public class TransactionResponseDto {
 
-    private Long accountId;
+    private UUID id;
 
     private TransactionType transactionType;
 
     private BigDecimal amount;
 
+    private LocalDateTime timestamp;
+
+    private Long accountId;
 
 }

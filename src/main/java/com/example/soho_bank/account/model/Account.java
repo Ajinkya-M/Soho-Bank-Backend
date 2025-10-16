@@ -15,6 +15,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Data
@@ -54,6 +55,10 @@ public class Account {
 
     @UpdateTimestamp
     private LocalDateTime updatedAt;
+
+
+    @OneToMany(mappedBy = "account", cascade = CascadeType.ALL)
+    private List<Transaction> transactionList;
 
 
     public void setBalance(BigDecimal balance) {

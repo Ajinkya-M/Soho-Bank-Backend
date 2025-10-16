@@ -38,8 +38,14 @@ public class SohoBankApplication {
 					.role(Role.USER)
 					.password(passwordEncoder.encode("vk@123"))
 					.build();
-
 			var user3 = User.builder()
+					.email("st@gmail.com")
+					.name("Sachin Tendulkar")
+					.role(Role.USER)
+					.password(passwordEncoder.encode("st@123"))
+					.build();
+
+			var user4 = User.builder()
 					.email("admin@gmail.com")
 					.name("Admin")
 					.role(Role.ADMIN)
@@ -49,6 +55,7 @@ public class SohoBankApplication {
 			userRepository.save(user1);
 			userRepository.save(user2);
 			userRepository.save(user3);
+			userRepository.save(user4);
 
 			log.info("Users created successfully");
 		};

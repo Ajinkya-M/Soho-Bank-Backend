@@ -4,6 +4,7 @@ import com.example.soho_bank.account.dto.AccountCreateDto;
 import com.example.soho_bank.account.dto.AccountResponseDto;
 import com.example.soho_bank.account.dto.TransactionRequestDto;
 import com.example.soho_bank.account.service.AccountService;
+import com.example.soho_bank.account.service.TransactionService;
 import com.example.soho_bank.auth.common.AuthHelpers;
 import com.example.soho_bank.user.model.User;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +25,8 @@ import java.util.List;
 public class AccountController {
 
     private final AccountService accountService;
+
+    private final TransactionService transactionService;
 
     @PostMapping
     public ResponseEntity<String> createAccount(@Validated @RequestBody AccountCreateDto accountCreateDto) {
@@ -52,7 +55,14 @@ public class AccountController {
 
     @PostMapping("/{accountNumber}/transaction")
     public ResponseEntity<?> transaction(@RequestBody TransactionRequestDto transactionRequestDto) {
-        return ResponseEntity.ok("Hi");
+        var user = AuthHelpers.getAuthenticatedUserId();
+        var transaction = this.transactionService.createTransaction(user, transactionRequestDto);
+        return ResponseEntity.ok(transaction);
+    }
+
+    @GetMapping("/transaction")
+    public ResponseEntity<?> getTransactions() {
+        return ResponseEntity.ok(this.transactionService.getTransactions());
     }
 
 

@@ -81,4 +81,23 @@ public class AccountService {
         return AccountResponseDtoMapper.accountToAccountResponseDto(savedAccount);
     }
 
+    @Transactional
+    public AccountResponseDto withDrawAmount(Long accountNumber, Long userId, BigDecimal amount) {
+        Account account = this.accountRepository.findByAccountNumber(accountNumber).orElseThrow();
+        if (!account.getUser().getId().equals(userId)) {
+            throw new RuntimeException("Account access forbidden");
+        }
+
+        if (account.getBalance().compareTo(amount) < 0) {
+            throw new RuntimeException("Insufficient funds for withdraw");
+        }
+
+        account.setBalance(account.getBalance().subtract(amount));
+
+        accountRepository.save(account);
+
+        var savedAccount = this.accountRepository.findByAccountNumber(accountNumber).orElseThrow();
+        return AccountResponseDtoMapper.accountToAccountResponseDto(savedAccount);
+    }
+
 }
